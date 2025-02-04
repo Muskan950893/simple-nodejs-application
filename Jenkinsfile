@@ -4,13 +4,13 @@ pipeline {
     environment {
         IMAGE_NAME = "node-app"
         IMAGE_TAG = "latest"
-        DOCKER_HUB_REPO = "your-dockerhub-username/node-app"
+        DOCKER_HUB_REPO = "amitku13/nodejs_application"
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/your-repo/node-app.git'
+                git 'https://github.com/amitku13/simple-nodejs-application.git'
             }
         }
 
