@@ -20,11 +20,13 @@ pipeline {
         stage('Install Node.js') {
             steps {
                 sh '''
+                echo "Checking if Node.js is installed..."
                 if ! command -v node &> /dev/null
                 then
                     echo "Node.js not found. Installing..."
-                    curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
-                    apt-get install -y nodejs
+                    sudo apt-get update && sudo apt-get install -y curl
+                    curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+                    sudo apt-get install -y nodejs
                 else
                     echo "Node.js is already installed."
                 fi
