@@ -17,22 +17,9 @@ pipeline {
             }
         }
 
-        stage('Install Node.js and Dependencies') {
+        stage('Install Dependencies') {
             steps {
                 sh '''
-                echo "Checking if Node.js is installed..."
-                if ! command -v node &> /dev/null
-                then
-                    echo "Installing Node.js..."
-                    curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-                    sudo apt-get install -y nodejs
-                else
-                    echo "Node.js is already installed."
-                fi
-
-                node -v
-                npm -v
-
                 echo "Installing project dependencies..."
                 npm install
                 '''
@@ -52,7 +39,7 @@ pipeline {
             steps {
                 sh '''
                 echo "Checking if Docker is running..."
-                if ! systemctl is-active docker; then
+                if ! systemctl is-active --quiet docker; then
                     echo "Starting Docker service..."
                     sudo systemctl start docker
                 fi
@@ -71,13 +58,15 @@ pipeline {
 
         stage('Push to Docker Hub') {
             steps {
-                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: '']) {
-                    sh '''
-                    echo "Tagging Docker image..."
-                    docker tag $IMAGE_NAME:$IMAGE_TAG $DOCKER_HUB_REPO:$IMAGE_TAG
-                    echo "Pushing Docker image to Docker Hub..."
-                    docker push $DOCKER_HUB_REPO:$IMAGE_TAG
-                    '''
+                script {
+                    withDockerRegistry([credentialsId: 'docker-hub-credentials', url: 'https://index.docker.io/v1/']) {
+                        sh '''
+                        echo "Tagging Docker image..."
+                        docker tag $IMAGE_NAME:$IMAGE_TAG $DOCKER_HUB_REPO:$IMAGE_TAG
+                        echo "Pushing Docker image to Docker Hub..."
+                        docker push $DOCKER_HUB_REPO:$IMAGE_TAG
+                        '''
+                    }
                 }
             }
         }
