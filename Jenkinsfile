@@ -17,14 +17,31 @@ pipeline {
             }
         }
 
-        stage('Build & Test in Node.js Container') {
-            agent {
-                docker { image 'node:16' }
-            }
+        stage('Install Node.js and Dependencies') {
             steps {
                 sh '''
+                echo "Checking if Node.js is installed..."
+                if ! command -v node &> /dev/null
+                then
+                    echo "Installing Node.js..."
+                    curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+                    sudo apt-get install -y nodejs
+                else
+                    echo "Node.js is already installed."
+                fi
+
+                node -v
+                npm -v
+
                 echo "Installing project dependencies..."
                 npm install
+                '''
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh '''
                 echo "Running tests..."
                 npm test || echo "No tests found, skipping..."
                 '''
@@ -37,7 +54,7 @@ pipeline {
                 echo "Checking if Docker is running..."
                 if ! systemctl is-active docker; then
                     echo "Starting Docker service..."
-                    echo "yourpassword" | sudo -S systemctl start docker
+                    sudo systemctl start docker
                 fi
                 '''
             }
