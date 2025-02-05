@@ -11,7 +11,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 git(
-                    url: 'https://github.com/amitku13/simple-nodejs-application.git', branch: 'main'
+                    url: 'https://github.com/amitku13/simple-nodejs-application.git',
                     branch: 'main'
                 )
             }
