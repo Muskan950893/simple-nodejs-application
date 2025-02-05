@@ -17,40 +17,28 @@ pipeline {
             }
         }
 
-        stage('Install Node.js') {
-            steps {
-                sh '''
-                echo "Checking if Node.js is installed..."
-                if ! command -v node &> /dev/null
-                then
-                    echo "Node.js not found. Installing..."
-                    sudo apt-get update && sudo apt-get install -y curl ca-certificates gnupg
-                    curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-                    sudo apt-get install -y nodejs
-                else
-                    echo "Node.js is already installed."
-                fi
-                node -v
-                npm -v
-                '''
+        stage('Build & Test in Node.js Container') {
+            agent {
+                docker { image 'node:16' }
             }
-        }
-
-        stage('Install Dependencies') {
             steps {
                 sh '''
-                set -e
                 echo "Installing project dependencies..."
                 npm install
+                echo "Running tests..."
+                npm test || echo "No tests found, skipping..."
                 '''
             }
         }
 
-        stage('Run Tests') {
+        stage('Ensure Docker is Running') {
             steps {
                 sh '''
-                echo "Running tests..."
-                npm test || echo "No tests found, skipping..."
+                echo "Checking if Docker is running..."
+                if ! systemctl is-active docker; then
+                    echo "Starting Docker service..."
+                    echo "yourpassword" | sudo -S systemctl start docker
+                fi
                 '''
             }
         }
@@ -58,8 +46,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                echo "Ensuring Docker is running..."
-                systemctl is-active docker || sudo systemctl start docker
                 echo "Building Docker image..."
                 docker build -t $IMAGE_NAME:$IMAGE_TAG .
                 '''
