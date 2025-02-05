@@ -24,7 +24,7 @@ pipeline {
                 if ! command -v node &> /dev/null
                 then
                     echo "Node.js not found. Installing..."
-                    sudo apt-get update && sudo apt-get install -y curl
+                    sudo apt-get update && sudo apt-get install -y curl ca-certificates gnupg
                     curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
                     sudo apt-get install -y nodejs
                 else
@@ -39,6 +39,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
+                set -e
                 echo "Installing project dependencies..."
                 npm install
                 '''
@@ -57,6 +58,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
+                echo "Ensuring Docker is running..."
+                systemctl is-active docker || sudo systemctl start docker
                 echo "Building Docker image..."
                 docker build -t $IMAGE_NAME:$IMAGE_TAG .
                 '''
