@@ -78,7 +78,7 @@ pipeline {
             steps {
                 sh '''
                 echo "Deploying new container..."
-                docker run -d -p 102:3000 --name $IMAGE_NAME $DOCKER_HUB_REPO:$IMAGE_TAG
+                docker run -d -p 3000:3000 --name $IMAGE_NAME $DOCKER_HUB_REPO:$IMAGE_TAG
                 '''
             }
         }
