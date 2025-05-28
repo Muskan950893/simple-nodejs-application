@@ -6,6 +6,9 @@ pipeline {
         IMAGE_TAG = "latest"
         DOCKER_HUB_REPO = "pardeep800/pardeephub"
     }
+    tools {
+        nodejs 'NodeJS'
+    }
 
     stages {
         stage('Clone Repository') {
