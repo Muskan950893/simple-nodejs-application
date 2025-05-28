@@ -2,16 +2,16 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "node-app"
+        IMAGE_NAME = "muskan"
         IMAGE_TAG = "latest"
-        DOCKER_HUB_REPO = "amitku13/nodejs_application"
+        DOCKER_HUB_REPO = "pardeep800/pardeephub"
     }
 
     stages {
         stage('Clone Repository') {
             steps {
                 git(
-                    url: 'https://github.com/amitku13/simple-nodejs-application.git',
+                    url: 'https://github.com/Pardeep800/simple-nodejs-application.git',
                     branch: 'main'
                 )
             }
@@ -74,10 +74,8 @@ pipeline {
         stage('Deploy Container') {
             steps {
                 sh '''
-                echo "Stopping and removing old container (if exists)..."
-                docker stop $IMAGE_NAME || true && docker rm $IMAGE_NAME || true
                 echo "Deploying new container..."
-                docker run -d -p 3000:3000 --name $IMAGE_NAME $DOCKER_HUB_REPO:$IMAGE_TAG
+                docker run -d -p 102:3000 --name $IMAGE_NAME $DOCKER_HUB_REPO:$IMAGE_TAG
                 '''
             }
         }
