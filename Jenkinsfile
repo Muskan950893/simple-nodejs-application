@@ -4,17 +4,17 @@ pipeline {
     environment {
         IMAGE_NAME = "muskan"
         IMAGE_TAG = "latest"
-        DOCKER_HUB_REPO = "pardeep800/pardeephub"
+        DOCKER_HUB_REPO = muskan2311/muskan-repo""
     }
     tools {
-        nodejs 'NodeJS'
+        nodejs 'NODEJS'
     }
 
     stages {
         stage('Clone Repository') {
             steps {
                 git(
-                    url: 'https://github.com/Pardeep800/simple-nodejs-application.git',
+                    url: 'https://github.com/Muskan950893/simple-nodejs-application.git',
                     branch: 'main'
                 )
             }
