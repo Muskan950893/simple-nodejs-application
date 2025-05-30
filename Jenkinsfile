@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "muskan"
         IMAGE_TAG = "latest"
-        DOCKER_HUB_REPO = muskan2311/muskan-repo""
+        DOCKER_HUB_REPO = "muskan2311/muskan-repo"
     }
     tools {
         nodejs 'NODEJS'
